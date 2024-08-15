@@ -1,12 +1,10 @@
 <script setup>
-import Input from '@/components/Base/Input.vue'
-import Button from '@/components/Base/Button.vue'
 import { onMounted, ref } from 'vue'
-import { useCitiesStore } from '@/stores/cities.js'
 import { useVuelidate } from '@vuelidate/core'
 import { required, minLength } from '@vuelidate/validators'
-
-const store = useCitiesStore()
+import { useCitiesStore } from '@/stores/cities.js'
+import Input from '@/components/Base/Input.vue'
+import Button from '@/components/Base/Button.vue'
 
 const props = defineProps({
   id: {
@@ -15,10 +13,10 @@ const props = defineProps({
   }
 })
 
+const store = useCitiesStore()
 const formData = ref({ city: '' })
 
 const rulesValidate = { city: { required, minLength: minLength(3) } }
-
 const v$ = useVuelidate(rulesValidate, formData.value)
 
 const data = ref(null)
@@ -32,7 +30,7 @@ const onSubmitSearchCity = async () => {
 
   if (result) {
     try {
-      data.value = await store.getDataForCity(formData.value.city)
+      data.value = await store.getCitiesForSearch(formData.value.city)
       isShowSelect.value = true
       isEmpty.value = !data.value.count
     } catch (err) {
@@ -49,12 +47,13 @@ const onClickUpdateCity = async (name) => {
     await store.getUpdateWeatherFromSearch(name, props.id)
   } catch (err) {
     console.error(err)
+  } finally {
+    loading.value = false
   }
-  loading.value = false
 }
 
 onMounted(() => {
-  document.addEventListener('click', (e) => {
+  document.addEventListener('click', () => {
     if (isShowSelect.value) {
       isShowSelect.value = false
     }
@@ -141,7 +140,7 @@ onMounted(() => {
   }
 
   &__empty {
-    padding: 0.5rem;
+    padding: 0.5rem 1.1rem;
   }
 }
 </style>

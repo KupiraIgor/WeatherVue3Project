@@ -4,10 +4,16 @@ import TheHeader from '@/components/TheHeader.vue'
 </script>
 
 <template>
-  <div>
+  <div class="app">
     <TheHeader />
     <RouterView />
   </div>
 </template>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+</style>

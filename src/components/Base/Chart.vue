@@ -29,15 +29,21 @@ const createChart = async () => {
       labels: processedData.labels,
       datasets: [
         {
-          label: 'Temperature (°C)',
           borderColor: '#ff5c13',
           data: processedData.temperatures,
           cubicInterpolationMode: 'monotone',
-          tension: 0.4
+          tension: 0.4,
+          displayName: false
         }
       ]
     },
+
     options: {
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
       responsive: true,
       scales: {
         x: {
@@ -75,14 +81,21 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div>
+  <div class="chart">
+    <h3 class="chart__title">Hourly forecast</h3>
     <canvas ref="chartCanvas"></canvas>
   </div>
 </template>
 
-<style>
-canvas {
-  max-width: 100%;
-  height: 20rem;
+<style lang="scss" scoped>
+.chart {
+  &__title {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2.2rem;
+  }
+  canvas {
+    max-width: 100%;
+  }
 }
 </style>

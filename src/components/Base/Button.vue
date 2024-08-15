@@ -7,12 +7,26 @@ defineProps({
   disabled: {
     type: Boolean,
     default: false
+  },
+  color: {
+    type: String,
+    default: 'black'
   }
 })
+
+const emit = defineEmits(['click'])
 </script>
 
 <template>
-  <button :type="type" :disabled="disabled" class="base-button"><slot /></button>
+  <button
+    :type="type"
+    :disabled="disabled"
+    class="base-button"
+    :class="`_${color}`"
+    @click="emit('click')"
+  >
+    <slot />
+  </button>
 </template>
 
 <style lang="scss" scoped>
@@ -27,5 +41,13 @@ defineProps({
   background: var(--color-black);
   color: var(--color-white);
   border-radius: 0.6rem;
+
+  &._black {
+    background: var(--color-black);
+  }
+
+  &._red {
+    background: var(--color-red);
+  }
 }
 </style>

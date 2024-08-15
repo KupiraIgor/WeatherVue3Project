@@ -53,14 +53,19 @@ export const useCitiesStore = defineStore('cities', () => {
     }
   }
 
-  const getWeatherCity = async () => {
-    const { weather, forecast } = await getWeather(userCityFromIpAddress.value)
-    const objCity = generateObjCity(weather.data, forecast.data)
+  const getWeatherCityObj = async () => {
+    if (cities.value.length < 5) {
+      const { weather, forecast } = await getWeather(userCityFromIpAddress.value)
+      const objCity = generateObjCity(weather.data, forecast.data)
 
-    objCity.id = idCity.value
-    idCity.value += 1
+      objCity.id = idCity.value
+      idCity.value += 1
 
-    cities.value.push(objCity)
+      cities.value.push(objCity)
+      return true
+    } else {
+      return false
+    }
   }
 
   const getUpdateWeatherFromSearch = async (city, id) => {
@@ -77,7 +82,7 @@ export const useCitiesStore = defineStore('cities', () => {
     }
   }
 
-  const getDataForCity = async (city) => {
+  const getCitiesForSearch = async (city) => {
     try {
       const response = await axiosInstance.get(`find?q=${city}`)
       return response.data
@@ -86,11 +91,20 @@ export const useCitiesStore = defineStore('cities', () => {
     }
   }
 
+  const deleteCity = (id) => {
+    const index = cities.value.findIndex((item) => item.id === id)
+
+    if (index !== -1) {
+      cities.value.splice(index, 1)
+    }
+  }
+
   return {
     cities,
-    getWeatherCity,
+    getWeatherCityObj,
     getIpUserFromIpAddress,
-    getDataForCity,
-    getUpdateWeatherFromSearch
+    getCitiesForSearch,
+    getUpdateWeatherFromSearch,
+    deleteCity
   }
 })
