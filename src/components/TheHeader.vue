@@ -1,14 +1,33 @@
-<script setup></script>
+<script setup>
+import { i18n } from '@/main.js'
+import moment from 'moment/min/moment-with-locales'
+
+const locale = i18n.global.locale
+
+const changeLanguage = (locale) => {
+  i18n.global.locale = locale
+  moment.locale(locale)
+  localStorage.setItem('appLanguage', locale)
+  window.location.reload()
+}
+</script>
 
 <template>
   <header class="header">
     <div class="container">
       <div class="header__body">
         <RouterLink to="/" class="header__logo">Weather</RouterLink>
-        <nav class="header__nav">
-          <RouterLink to="/" class="">Home</RouterLink>
-          <RouterLink to="/selected" class="">Selected</RouterLink>
-        </nav>
+        <div class="header__wrap">
+          <div class="header__locale">
+            <button @click="changeLanguage('en')" :class="{ _active: locale === 'en' }">en</button>
+            <span>/</span>
+            <button @click="changeLanguage('uk')" :class="{ _active: locale === 'uk' }">uk</button>
+          </div>
+          <nav class="header__nav">
+            <RouterLink to="/" class="">{{ $t('home') }}</RouterLink>
+            <RouterLink to="/selected" class="">{{ $t('favorites') }}</RouterLink>
+          </nav>
+        </div>
       </div>
     </div>
   </header>
@@ -36,6 +55,24 @@
     background: ghostwhite;
     padding: 0.5rem 2rem;
     border-radius: 1.5rem;
+  }
+
+  &__locale {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    button {
+      &._active {
+        font-weight: 600;
+      }
+    }
+  }
+
+  &__wrap {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
   }
 }
 </style>

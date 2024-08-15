@@ -28,14 +28,14 @@ const onChoiceTab = (tab) => {
           @click="onChoiceTab('day')"
           :class="{ _active: activeTab === 'day' }"
         >
-          1 day
+          {{ $t('one_day') }}
         </Tab>
         <Tab
           class="block-body__tag"
           @click="onChoiceTab('5days')"
           :class="{ _active: activeTab === '5days' }"
         >
-          5 days
+          {{ $t('five_days') }}
         </Tab>
       </div>
       <h2 class="block-body__city">{{ city.name }}, {{ city.country }}</h2>
@@ -48,12 +48,14 @@ const onChoiceTab = (tab) => {
     <Chart
       v-if="activeTab === 'day'"
       :hourly-data="city.hourlyOneDayForChart"
-      title="Hourly forecast"
+      :title="$t('hourly_forecast')"
+      :title-bottom="$t('time')"
     />
     <Chart
       v-else-if="activeTab === '5days'"
       :hourly-data="city.hourlyFiveDaysForChart"
-      title="Daily forecast"
+      :title="$t('daily_forecast')"
+      :title-bottom="$t('day')"
     />
   </div>
 </template>

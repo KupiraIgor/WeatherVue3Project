@@ -1,11 +1,13 @@
+import { i18n } from '@/main.js'
+import moment from 'moment/min/moment-with-locales'
 export const getWindDescription = (speed) => {
-  if (speed <= 0.2) return 'Calm'
-  if (speed <= 1.5) return 'Light air'
-  if (speed <= 3.3) return 'Light breeze'
-  if (speed <= 5.4) return 'Gentle breeze'
-  if (speed <= 7.9) return 'Moderate breeze'
-  if (speed <= 10.7) return 'Fresh breeze'
-  return 'Strong wind'
+  if (speed <= 0.2) return i18n.global.t('calm')
+  if (speed <= 1.5) return i18n.global.t('light_air')
+  if (speed <= 3.3) return i18n.global.t('light_breeze')
+  if (speed <= 5.4) return i18n.global.t('gentle_breeze')
+  if (speed <= 7.9) return i18n.global.t('moderate_breeze')
+  if (speed <= 10.7) return i18n.global.t('fresh_breeze')
+  return i18n.global.t('strong_wind')
 }
 
 export const upperCaseFirstLetter = (str) => {
@@ -21,37 +23,28 @@ export const calculateDailyExtremes = (hourlyData) => {
 
   hourlyData.forEach((item) => {
     const date = new Date(item.dt_txt)
+    const dateString = date.toISOString().split('T')[0]
 
-    const formattedDate = date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric'
-    })
-
-    if (!days[formattedDate]) {
-      days[formattedDate] = {
+    if (!days[dateString]) {
+      days[dateString] = {
         minTemp: item.main.temp,
         maxTemp: item.main.temp,
         iconCounts: {},
         descriptionCounts: {},
-        mostFrequentIcon: item.weather[0].icon,
-        mostFrequentDescription: item.weather[0].main
+        mostFrequentIcon: item.weather[0].icon
       }
     } else {
-      if (item.main.temp < days[formattedDate].minTemp) {
-        days[formattedDate].minTemp = item.main.temp
+      if (item.main.temp < days[dateString].minTemp) {
+        days[dateString].minTemp = item.main.temp
       }
-      if (item.main.temp > days[formattedDate].maxTemp) {
-        days[formattedDate].maxTemp = item.main.temp
+      if (item.main.temp > days[dateString].maxTemp) {
+        days[dateString].maxTemp = item.main.temp
       }
     }
 
     const icon = item.weather[0].icon
-    const description = item.weather[0].main
 
-    days[formattedDate].iconCounts[icon] = (days[formattedDate].iconCounts[icon] || 0) + 1
-    days[formattedDate].descriptionCounts[description] =
-      (days[formattedDate].descriptionCounts[description] || 0) + 1
+    days[dateString].iconCounts[icon] = (days[dateString].iconCounts[icon] || 0) + 1
   })
 
   return Object.keys(days).map((date) => {
@@ -60,16 +53,12 @@ export const calculateDailyExtremes = (hourlyData) => {
     const mostFrequentIcon = Object.keys(day.iconCounts).reduce((a, b) =>
       day.iconCounts[a] > day.iconCounts[b] ? a : b
     )
-    const mostFrequentDescription = Object.keys(day.descriptionCounts).reduce((a, b) =>
-      day.descriptionCounts[a] > day.descriptionCounts[b] ? a : b
-    )
 
     return {
-      date,
+      date: moment(date).format('ddd, MMM D'),
       minTemp: Math.round(day.minTemp),
       maxTemp: Math.round(day.maxTemp),
-      icon: mostFrequentIcon,
-      main: mostFrequentDescription
+      icon: mostFrequentIcon
     }
   })
 }
@@ -78,23 +67,22 @@ export const calculateDailyAverages = (forecastData) => {
   const days = {}
 
   forecastData.forEach((item) => {
-    const date = new Date(item.dt_txt)
-    const formattedDate = date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric'
-    })
+    const date = item.dt_txt.split(' ')[0]
 
-    if (!days[formattedDate]) {
-      days[formattedDate] = { sum: 0, count: 0 }
+    if (!days[date]) {
+      days[date] = { sum: 0, count: 0 }
     }
 
-    days[formattedDate].sum += item.main.temp
-    days[formattedDate].count += 1
+    days[date].sum += item.main.temp
+    days[date].count += 1
   })
 
-  const labels = Object.keys(days)
-  const temperatures = labels.map((date) => days[date].sum / days[date].count)
+  const labelsKeys = Object.keys(days)
+  const labels = labelsKeys.map((item) => {
+    return moment(item).format('ddd, MMM D')
+  })
+
+  const temperatures = labelsKeys.map((date) => days[date].sum / days[date].count)
 
   return { labels, temperatures }
 }

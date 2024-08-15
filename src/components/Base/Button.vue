@@ -1,4 +1,6 @@
 <script setup>
+import Loader from '@/components/Base/Loader.vue'
+
 defineProps({
   type: {
     type: String,
@@ -11,6 +13,10 @@ defineProps({
   color: {
     type: String,
     default: 'black'
+  },
+  loading: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -22,15 +28,17 @@ const emit = defineEmits(['click'])
     :type="type"
     :disabled="disabled"
     class="base-button"
-    :class="`_${color}`"
+    :class="[`_${color}`, { _loading: loading }]"
     @click="emit('click')"
   >
-    <slot />
+    <Loader v-if="loading" />
+    <span><slot /></span>
   </button>
 </template>
 
 <style lang="scss" scoped>
 .base-button {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -41,6 +49,20 @@ const emit = defineEmits(['click'])
   background: var(--color-black);
   color: var(--color-white);
   border-radius: 0.6rem;
+  overflow: hidden;
+
+  .base-loader {
+    transform: scale(0.8);
+  }
+
+  &._loading {
+    pointer-events: none;
+    opacity: 0.7;
+
+    span {
+      opacity: 0;
+    }
+  }
 
   &._black {
     background: var(--color-black);

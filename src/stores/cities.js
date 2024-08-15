@@ -7,6 +7,7 @@ import {
   calculateDailyExtremes,
   processWeatherData
 } from '@/functions/Functions.js'
+import { i18n } from '@/main.js'
 
 export const useCitiesStore = defineStore('cities', () => {
   const userCityFromIpAddress = ref(null)
@@ -47,10 +48,10 @@ export const useCitiesStore = defineStore('cities', () => {
     try {
       const [weatherResponse, forecastResponse] = await Promise.all([
         axiosInstance.get('weather', {
-          params: { q: city, units: 'metric' }
+          params: { q: city, units: 'metric', lang: i18n.global.locale.value }
         }),
         axiosInstance.get('forecast', {
-          params: { q: city, units: 'metric' }
+          params: { q: city, units: 'metric', lang: i18n.global.locale.value }
         })
       ])
 

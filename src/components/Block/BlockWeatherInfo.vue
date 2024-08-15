@@ -1,5 +1,5 @@
 <script setup>
-import moment from 'moment'
+import moment from 'moment/min/moment-with-locales'
 import {
   getWindDescription,
   metersToKilometers,
@@ -26,23 +26,23 @@ defineProps({
         <span>{{ Math.round(city.temp) }}°C</span>
       </div>
       <div class="block-info__desc">
-        <span>Feels like {{ Math.round(city.feels_like) }}°C. </span>
+        <span>{{ $t('feels_like') }} {{ Math.round(city.feels_like) }}°C. </span>
         <span>{{ upperCaseFirstLetter(city.description) }}. </span>
         <span>{{ getWindDescription(city.wind_speed) }}</span>
       </div>
     </div>
     <div class="block-info__right">
       <div class="block-info__item">
-        Humidity: <span>{{ city.humidity }}%</span>
+        {{ $t('humidity') }}: <span>{{ city.humidity }}%</span>
       </div>
       <div class="block-info__item">
-        Visibility: <span>{{ metersToKilometers(city.visibility) }}</span>
+        {{ $t('visibility') }}: <span>{{ metersToKilometers(city.visibility) }}</span>
       </div>
       <div class="block-info__item">
-        Pressure: <span>{{ city.pressure }} hPa</span>
+        {{ $t('pressure') }}: <span>{{ city.pressure }} hPa</span>
       </div>
       <div class="block-info__item">
-        Wind speed: <span>{{ city.wind_speed }}m/s</span>
+        {{ $t('wind_speed') }}: <span>{{ city.wind_speed }}m/s</span>
       </div>
     </div>
   </div>

@@ -1,7 +1,14 @@
-<script setup></script>
+<script setup>
+defineProps({
+  bg: {
+    type: Boolean,
+    default: false
+  }
+})
+</script>
 
 <template>
-  <div class="base-loader">
+  <div class="base-loader" :class="{ _bg: bg }">
     <svg
       class=""
       width="48"
@@ -29,6 +36,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &._bg {
+    background: rgba(255, 255, 255, 0.4);
+  }
 
   svg {
     animation: spine 1s linear infinite;

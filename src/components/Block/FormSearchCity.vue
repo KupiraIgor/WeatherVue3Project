@@ -1,10 +1,11 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
-import { required, minLength } from '@vuelidate/validators'
+import { required, minLength, helpers } from '@vuelidate/validators'
 import { useCitiesStore } from '@/stores/cities.js'
 import Input from '@/components/Base/Input.vue'
 import Button from '@/components/Base/Button.vue'
+import { i18n } from '@/main.js'
 
 const props = defineProps({
   id: {
@@ -13,10 +14,17 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['loading'])
+
 const store = useCitiesStore()
 const formData = ref({ city: '' })
 
-const rulesValidate = { city: { required, minLength: minLength(3) } }
+const rulesValidate = {
+  city: {
+    required: helpers.withMessage(i18n.global.t('value_is_required'), required),
+    minLength: helpers.withMessage(i18n.global.t('should_be_at_least_3'), minLength(3))
+  }
+}
 const v$ = useVuelidate(rulesValidate, formData.value)
 
 const data = ref(null)
@@ -37,19 +45,17 @@ const onSubmitSearchCity = async () => {
       console.error(err)
     }
   }
-
   loading.value = false
 }
 
 const onClickUpdateCity = async (name) => {
-  loading.value = true
+  emit('loading', true)
   try {
     await store.getUpdateWeatherFromSearch(name, props.id)
   } catch (err) {
     console.error(err)
-  } finally {
-    loading.value = false
   }
+  emit('loading', false)
 }
 
 onMounted(() => {
@@ -68,10 +74,10 @@ onMounted(() => {
         v-model="formData.city"
         :error="v$.city.$errors.length"
         :errors="v$.city.$errors"
-        placeholder="Введіть місто"
+        :placeholder="$t('enter_city')"
       />
       <div v-if="isShowSelect" class="form-city__select">
-        <div v-if="isEmpty" class="form-city__empty">Nothing found</div>
+        <div v-if="isEmpty" class="form-city__empty">{{ $t('nothing_found') }}</div>
         <template v-else>
           <button
             v-for="item of data.list"
@@ -86,7 +92,7 @@ onMounted(() => {
         ></template>
       </div>
     </div>
-    <Button type="submit">Search</Button>
+    <Button type="submit" :loading="loading">{{ $t('search') }}</Button>
   </form>
 </template>
 

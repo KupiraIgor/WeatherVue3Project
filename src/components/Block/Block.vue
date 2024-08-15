@@ -5,6 +5,7 @@ import FormSearchCity from '@/components/Block/FormSearchCity.vue'
 import Button from '@/components/Base/Button.vue'
 import Modal from '@/components/Base/Modal.vue'
 import BlockBodyInfo from '@/components/Block/BlockWeather.vue'
+import Loader from '@/components/Base/Loader.vue'
 
 const props = defineProps({
   city: {
@@ -15,6 +16,7 @@ const props = defineProps({
 
 const store = useCitiesStore()
 const modalEl = ref()
+const loading = ref(false)
 
 const onShowModal = () => {
   modalEl.value.open()
@@ -33,10 +35,10 @@ const onDeleteBlock = () => {
 <template>
   <div class="block">
     <div class="block__header">
-      <FormSearchCity :id="city.id" />
+      <FormSearchCity :id="city.id" @loading="(arg) => (loading = arg)" />
       <div class="block__buttons">
-        <Button>У вибране</Button>
-        <Button color="red" @click="onShowModal">Delete</Button>
+        <Button>{{ $t('to_favorites') }}</Button>
+        <Button color="red" @click="onShowModal">{{ $t('delete') }}</Button>
       </div>
     </div>
     <div class="block__body">
@@ -45,19 +47,22 @@ const onDeleteBlock = () => {
     <Modal ref="modalEl">
       <div class="block__modal">
         <div class="block__modal-text">
-          You definitely want to delete the weather for {{ city.name }}?
+          {{ $t('you_definitely_want_to_delete') }} {{ city.name }}?
         </div>
         <div class="block__modal-buttons">
-          <Button @click="onDeleteBlock">Yes</Button>
-          <Button @click="onCloseModal">No</Button>
+          <Button @click="onDeleteBlock">{{ $t('yes') }}</Button>
+          <Button @click="onCloseModal">{{ $t('no') }}</Button>
         </div>
       </div>
     </Modal>
+    <Loader v-if="loading" bg />
   </div>
 </template>
 
 <style lang="scss" scoped>
 .block {
+  position: relative;
+  overflow: hidden;
   border: 1px solid var(--color-gray);
   border-radius: 1rem;
   padding: 2.5rem;

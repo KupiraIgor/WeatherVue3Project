@@ -14,10 +14,10 @@ defineProps({
       <img :src="`http://openweathermap.org/img/wn/${day.icon}@2x.png`" alt="" />
     </div>
     <div class="card-day__temp">
-      Max: <span>{{ day.maxTemp }}°C</span>
+      {{ $t('max') }}: <span>{{ day.maxTemp }}°C</span>
     </div>
     <div class="card-day__temp">
-      Min: <span>{{ day.minTemp }}°C</span>
+      {{ $t('min') }}: <span>{{ day.minTemp }}°C</span>
     </div>
   </div>
 </template>

@@ -12,6 +12,7 @@ const { cities } = storeToRefs(store)
 
 const modalEl = ref()
 const loading = ref(true)
+const loadingBtn = ref(false)
 
 const onShowModal = () => {
   modalEl.value.open()
@@ -29,7 +30,7 @@ const fetchData = async () => {
 }
 
 const onAddCity = async () => {
-  const loading = ref(true)
+  loadingBtn.value = true
   try {
     const response = await store.getWeatherCityObj()
     if (!response) {
@@ -38,7 +39,7 @@ const onAddCity = async () => {
   } catch (err) {
     console.error(err)
   } finally {
-    loading.value = false
+    loadingBtn.value = false
   }
 }
 
@@ -55,13 +56,13 @@ onMounted(() => {
         <div v-if="cities.length" class="home-page__items">
           <Block v-for="city of cities" :key="city.id" :city="city" />
         </div>
-        <div v-else class="home-page__empty">Add weather forecast</div>
+        <div v-else class="home-page__empty">{{ $t('add_weather') }}</div>
         <div class="home-page__btn">
-          <Button @click="onAddCity">Add city</Button>
+          <Button @click="onAddCity" :loading="loadingBtn">{{ $t('add_city') }}</Button>
         </div>
       </template>
       <Modal ref="modalEl">
-        <div class="home-page__modal">The maximum number of cities is 5, delete to add more</div>
+        <div class="home-page__modal">{{ $t('maximum_cities_5') }}</div>
       </Modal>
     </div>
   </main>

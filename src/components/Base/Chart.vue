@@ -1,6 +1,7 @@
 <script setup>
 import { Chart } from 'chart.js/auto'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { i18n } from '@/main.js'
 
 const props = defineProps({
   hourlyData: {
@@ -8,6 +9,10 @@ const props = defineProps({
     required: true
   },
   title: {
+    type: String,
+    required: true
+  },
+  titleBottom: {
     type: String,
     required: true
   }
@@ -46,7 +51,7 @@ const createChart = async () => {
         x: {
           title: {
             display: true,
-            text: 'Time'
+            text: props.titleBottom
           },
           grid: {
             display: false
@@ -55,7 +60,7 @@ const createChart = async () => {
         y: {
           title: {
             display: true,
-            text: 'Temperature (°C)'
+            text: `${i18n.global.t('temperature')} (°C)`
           },
           grid: {
             display: false
