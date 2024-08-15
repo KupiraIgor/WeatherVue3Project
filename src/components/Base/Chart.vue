@@ -4,7 +4,11 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 const props = defineProps({
   hourlyData: {
-    type: Array,
+    type: Object,
+    required: true
+  },
+  title: {
+    type: String,
     required: true
   }
 })
@@ -12,15 +16,8 @@ const props = defineProps({
 const chartCanvas = ref(null)
 let chart = null
 
-const processWeatherData = () => {
-  const labels = props.hourlyData.map((entry) => entry.dt_txt.split(' ')[1]) // тільки час
-  const temperatures = props.hourlyData.map((entry) => entry.main.temp)
-
-  return { labels, temperatures }
-}
-
 const createChart = async () => {
-  const processedData = processWeatherData()
+  const processedData = props.hourlyData
 
   const ctx = chartCanvas.value.getContext('2d')
   chart = new Chart(ctx, {
@@ -82,7 +79,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="chart">
-    <h3 class="chart__title">Hourly forecast</h3>
+    <h3 class="chart__title">{{ title }}</h3>
     <canvas ref="chartCanvas"></canvas>
   </div>
 </template>

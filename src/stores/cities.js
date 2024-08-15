@@ -2,6 +2,11 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axiosInstance from '@/api/axiosConfig.js'
 import axios from 'axios'
+import {
+  calculateDailyAverages,
+  calculateDailyExtremes,
+  processWeatherData
+} from '@/functions/Functions.js'
 
 export const useCitiesStore = defineStore('cities', () => {
   const userCityFromIpAddress = ref(null)
@@ -29,8 +34,11 @@ export const useCitiesStore = defineStore('cities', () => {
     objCity.wind_speed = weather.wind.speed
     objCity.humidity = weather.main.humidity
     objCity.visibility = weather.visibility
+    objCity.pressure = weather.main.pressure
 
-    objCity.hourly = forecast.list.slice(0, 9)
+    objCity.hourlyOneDayForChart = processWeatherData(forecast.list.slice(0, 9))
+    objCity.hourlyFiveDaysForChart = calculateDailyAverages(forecast.list)
+    objCity.hourlyFiveDays = calculateDailyExtremes(forecast.list)
 
     return objCity
   }

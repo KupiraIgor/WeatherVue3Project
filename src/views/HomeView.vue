@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCitiesStore } from '@/stores/cities.js'
-import Block from '@/components/Block.vue'
+import Block from '@/components/Block/Block.vue'
 import Loader from '@/components/Base/Loader.vue'
 import Button from '@/components/Base/Button.vue'
 import Modal from '@/components/Base/Modal.vue'

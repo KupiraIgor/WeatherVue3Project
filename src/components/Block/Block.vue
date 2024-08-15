@@ -1,11 +1,10 @@
 <script setup>
 import { ref } from 'vue'
-import { getWindDescription, upperCaseFirstLetter } from '@/functions/Functions.js'
 import { useCitiesStore } from '@/stores/cities.js'
-import FormSearchCity from '@/components/Base/FormSearchCity.vue'
+import FormSearchCity from '@/components/Block/FormSearchCity.vue'
 import Button from '@/components/Base/Button.vue'
-import Chart from '@/components/Base/Chart.vue'
 import Modal from '@/components/Base/Modal.vue'
+import BlockBodyInfo from '@/components/Block/BlockWeather.vue'
 
 const props = defineProps({
   city: {
@@ -41,21 +40,8 @@ const onDeleteBlock = () => {
       </div>
     </div>
     <div class="block__body">
-      <h2 class="block__city">{{ city.name }}, {{ city.country }}</h2>
-      <div class="block__temp">
-        <img
-          :src="`http://openweathermap.org/img/wn/${city.icon}@2x.png`"
-          :alt="city.description"
-        />
-        <span>{{ Math.round(city.temp) }}°C</span>
-      </div>
-      <div class="block__desc">
-        <span>Feels like {{ Math.round(city.feels_like) }}°C. </span>
-        <span>{{ upperCaseFirstLetter(city.description) }}. </span>
-        <span>{{ getWindDescription(city.wind_speed) }}</span>
-      </div>
+      <BlockBodyInfo :city="city" />
     </div>
-    <Chart :hourly-data="city.hourly" />
     <Modal ref="modalEl">
       <div class="block__modal">
         <div class="block__modal-text">
@@ -85,39 +71,9 @@ const onDeleteBlock = () => {
     border-bottom: 1px solid var(--color-gray);
   }
 
-  &__body {
-    padding-bottom: 3rem;
-    margin-bottom: 2rem;
-    border-bottom: 1px solid var(--color-gray);
-  }
-
   &__buttons {
     display: flex;
     gap: 2rem;
-  }
-
-  &__city {
-    font-size: 2.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  &__temp {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    font-size: 3.4rem;
-    margin-bottom: 1rem;
-
-    img {
-      width: 6rem;
-      height: 6rem;
-    }
-  }
-
-  &__desc {
-    font-size: 1.4rem;
-    font-weight: 500;
   }
 
   &__modal {

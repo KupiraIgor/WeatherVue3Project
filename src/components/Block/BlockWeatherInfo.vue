@@ -1,0 +1,91 @@
+<script setup>
+import moment from 'moment'
+import {
+  getWindDescription,
+  metersToKilometers,
+  upperCaseFirstLetter
+} from '@/functions/Functions.js'
+
+defineProps({
+  city: {
+    type: Object,
+    required: true
+  }
+})
+</script>
+
+<template>
+  <div class="block-info">
+    <div class="block-info__left">
+      <div class="block-info__date">{{ moment().format('MMMM Do YYYY, h:mm a') }}</div>
+      <div class="block-info__temp">
+        <img
+          :src="`http://openweathermap.org/img/wn/${city.icon}@2x.png`"
+          :alt="city.description"
+        />
+        <span>{{ Math.round(city.temp) }}°C</span>
+      </div>
+      <div class="block-info__desc">
+        <span>Feels like {{ Math.round(city.feels_like) }}°C. </span>
+        <span>{{ upperCaseFirstLetter(city.description) }}. </span>
+        <span>{{ getWindDescription(city.wind_speed) }}</span>
+      </div>
+    </div>
+    <div class="block-info__right">
+      <div class="block-info__item">
+        Humidity: <span>{{ city.humidity }}%</span>
+      </div>
+      <div class="block-info__item">
+        Visibility: <span>{{ metersToKilometers(city.visibility) }}</span>
+      </div>
+      <div class="block-info__item">
+        Pressure: <span>{{ city.pressure }} hPa</span>
+      </div>
+      <div class="block-info__item">
+        Wind speed: <span>{{ city.wind_speed }}m/s</span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+.block-info {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 19rem;
+
+  &__right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-left: 5rem;
+    margin-left: 5rem;
+    border-left: 1px solid var(--color-gray);
+  }
+
+  &__date {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  &__temp {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    font-size: 3.4rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  &__desc {
+    font-weight: 500;
+  }
+
+  &__item {
+    span {
+      font-weight: 500;
+      font-size: 1.8rem;
+    }
+  }
+}
+</style>
