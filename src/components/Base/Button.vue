@@ -3,12 +3,16 @@ defineProps({
   type: {
     type: String,
     default: 'default'
+  },
+  disabled: {
+    type: Boolean,
+    default: false
   }
 })
 </script>
 
 <template>
-  <button :type="type" class="base-button"><slot /></button>
+  <button :type="type" :disabled="disabled" class="base-button"><slot /></button>
 </template>
 
 <style lang="scss" scoped>

@@ -9,16 +9,13 @@ const store = useCitiesStore()
 
 const { cities } = storeToRefs(store)
 
-const userCityFromIpAddress = ref(null)
-const data = ref(null)
 const loading = ref(true)
 const error = ref(null)
 
 const fetchData = async () => {
   try {
-    userCityFromIpAddress.value = await store.getIpUserFromIpAddress()
-    data.value = await store.getData(userCityFromIpAddress.value.city)
-    console.log(cities.value)
+    await store.getIpUserFromIpAddress()
+    await store.getWeatherCity()
   } catch (err) {
     error.value = 'Щось пішло не так'
   } finally {
@@ -32,7 +29,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <main>
+  <main class="home-page">
     <div class="container">
       <Loader v-if="loading" />
       <template v-else>
@@ -41,3 +38,9 @@ onMounted(() => {
     </div>
   </main>
 </template>
+
+<style lang="scss" scoped>
+.home-page {
+  padding-bottom: 5rem;
+}
+</style>
