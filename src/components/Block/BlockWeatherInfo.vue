@@ -17,7 +17,7 @@ defineProps({
       </div>
       <div class="block-info__temp">
         <img
-          :src="`http://openweathermap.org/img/wn/${city.icon}@2x.png`"
+          :src="`https://openweathermap.org/img/wn/${city.icon}@2x.png`"
           :alt="city.description"
         />
         <span>{{ Math.round(city.temp) }}°C</span>
