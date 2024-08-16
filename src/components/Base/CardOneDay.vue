@@ -13,7 +13,7 @@ defineProps({
   <div class="card-day">
     <div>{{ i18n.global.d(day.date, 'short') }}</div>
     <div class="card-day__img">
-      <img :src="`http://openweathermap.org/img/wn/${day.icon}@2x.png`" alt="" />
+      <img :src="`https://openweathermap.org/img/wn/${day.icon}@2x.png`" alt="" />
     </div>
     <div class="card-day__temp">
       {{ $t('max') }}: <span>{{ day.maxTemp }}°C</span>
