@@ -156,5 +156,17 @@ onMounted(() => {
   &__empty {
     padding: 0.5rem 1.1rem;
   }
+
+  @media (max-width: 768px) {
+    width: 100%;
+
+    &__wrap {
+      width: 100%;
+
+      .base-input__field {
+        width: 100%;
+      }
+    }
+  }
 }
 </style>

@@ -84,5 +84,15 @@ defineProps({
       font-size: 1.8rem;
     }
   }
+
+  @media (max-width: 900px) {
+    display: block;
+
+    &__right {
+      margin-left: 0;
+      padding-left: 0;
+      border: none;
+    }
+  }
 }
 </style>

@@ -75,15 +75,20 @@ const onChoiceTab = (tab) => {
   }
 
   &__days {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+    grid-gap: 2rem;
   }
 
   &__city {
     font-size: 2.5rem;
     font-weight: 600;
     margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    &__days {
+    }
   }
 }
 </style>

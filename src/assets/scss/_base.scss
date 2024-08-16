@@ -29,6 +29,11 @@ body {
   overflow-x: hidden;
 }
 
+html,
+body {
+  min-width: 380px;
+}
+
 a {
   display: inline-block;
   outline: 0;

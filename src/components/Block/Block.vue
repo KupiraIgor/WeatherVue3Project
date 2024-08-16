@@ -72,13 +72,14 @@ const onDeleteFromFavorites = () => {
       <FormSearchCity v-if="!isHideForm" :id="city.id" @loading="(arg) => (loading = arg)" />
       <div class="block__buttons">
         <template v-if="city.idRes">
-          <Button v-if="isFav" color="red" @click="onShowModalDeleteFav">
+          <Button v-if="isFav" color="red" @click="onShowModalDeleteFav" class="block__btn">
             {{ $t('delete_from') }}
           </Button>
-          <Button v-else @click="onAddToFavorites">{{ $t('to_favorites') }}</Button>
+          <Button v-else @click="onAddToFavorites" class="block__btn">
+            {{ $t('to_favorites') }}
+          </Button>
         </template>
-
-        <Button v-if="!isHideForm" color="red" @click="onShowModalDelete">
+        <Button v-if="!isHideForm" color="red" @click="onShowModalDelete" class="block__btn">
           {{ $t('delete') }}
         </Button>
       </div>
@@ -164,6 +165,27 @@ const onDeleteFromFavorites = () => {
       display: flex;
       justify-content: center;
       gap: 2rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    &__header {
+      flex-direction: column-reverse;
+      gap: 2rem;
+    }
+
+    &__buttons {
+      width: 100%;
+    }
+
+    &__btn {
+      flex: 1 1 50%;
+    }
+  }
+
+  @media (max-width: 500px) {
+    &__buttons {
+      flex-wrap: wrap;
     }
   }
 }

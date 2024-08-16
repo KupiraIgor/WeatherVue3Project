@@ -83,5 +83,18 @@ import { Trans } from '@/i18n/index.js'
     align-items: center;
     gap: 3rem;
   }
+
+  @media (max-width: 500px) {
+    padding: 1.5rem 0;
+
+    &__logo {
+      font-size: 2.2rem;
+    }
+
+    &__nav {
+      flex-direction: column;
+      gap: 0;
+    }
+  }
 }
 </style>

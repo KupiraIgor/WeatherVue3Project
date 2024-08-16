@@ -52,6 +52,7 @@ const emit = defineEmits(['click'])
   overflow: hidden;
   transition: var(--easing) var(--duration);
   box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
 
   &:hover,
   &:focus {
