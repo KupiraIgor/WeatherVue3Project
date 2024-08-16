@@ -2,12 +2,12 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axiosInstance from '@/api/axiosConfig.js'
 import axios from 'axios'
+import { i18n } from '@/i18n'
 import {
   calculateDailyAverages,
   calculateDailyExtremes,
   processWeatherData
 } from '@/functions/index.js'
-import { i18n } from '@/i18n'
 
 export const useCitiesStore = defineStore('cities', () => {
   const userCityFromIpAddress = ref(null)
@@ -179,6 +179,23 @@ export const useCitiesStore = defineStore('cities', () => {
     }
   }
 
+  const updateCityWithChangeLang = () => {
+    cities.value.forEach(async (item) => {
+      if (item.idRes) {
+        const { weather, forecast } = await getWeather(item.name)
+        const objCity = generateObjCity(weather.data, forecast.data)
+        objCity.id = item.id
+
+        const index = cities.value.findIndex((i) => i.id === item.id)
+
+        if (index !== -1) {
+          cities.value[index] = objCity
+        }
+      }
+    })
+    getFavoriteCities()
+  }
+
   return {
     cities,
     favoriteCities,
@@ -191,6 +208,7 @@ export const useCitiesStore = defineStore('cities', () => {
     addToFavorites,
     addCity,
     deleteFromFavorites,
-    getFavoriteCities
+    getFavoriteCities,
+    updateCityWithChangeLang
   }
 })

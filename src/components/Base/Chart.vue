@@ -1,6 +1,6 @@
 <script setup>
 import { Chart } from 'chart.js/auto'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { i18n } from '@/i18n'
 
 const props = defineProps({
@@ -71,8 +71,23 @@ const createChart = async () => {
   })
 }
 
+const updateChartLanguage = () => {
+  if (chart) {
+    chart.options.scales.y.title.text = `${i18n.global.t('temperature')} (°C)`
+    chart.options.scales.x.title.text = props.titleBottom
+    chart.update()
+  }
+}
+
 onMounted(() => {
   createChart()
+
+  watch(
+    () => i18n.global.locale.value,
+    () => {
+      updateChartLanguage()
+    }
+  )
 })
 
 onBeforeUnmount(() => {

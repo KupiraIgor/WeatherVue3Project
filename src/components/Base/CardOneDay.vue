@@ -1,4 +1,6 @@
 <script setup>
+import { i18n } from '@/i18n/index.js'
+
 defineProps({
   day: {
     type: Object,
@@ -9,7 +11,7 @@ defineProps({
 
 <template>
   <div class="card-day">
-    <div>{{ day.date }}</div>
+    <div>{{ i18n.global.d(day.date, 'short') }}</div>
     <div class="card-day__img">
       <img :src="`http://openweathermap.org/img/wn/${day.icon}@2x.png`" alt="" />
     </div>

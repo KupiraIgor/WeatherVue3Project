@@ -54,7 +54,7 @@ export const calculateDailyExtremes = (hourlyData) => {
     )
 
     return {
-      date: i18n.global.d(date, 'short'),
+      date: date,
       minTemp: Math.round(day.minTemp),
       maxTemp: Math.round(day.maxTemp),
       icon: mostFrequentIcon
