@@ -21,8 +21,8 @@ export const processWeatherDataDailyFiveDay = (data) => {
   return data.map((item) => {
     return {
       date: new Date(item.dt * 1000),
-      maxTemp: item.temp.max,
-      minTemp: item.temp.min,
+      maxTemp: Math.round(item.temp.max),
+      minTemp: Math.round(item.temp.min),
       icon: item.weather[0].icon,
       id: item.id
     }
