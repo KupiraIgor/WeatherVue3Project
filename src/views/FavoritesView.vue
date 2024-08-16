@@ -1,9 +1,9 @@
 <script setup>
-import { useCitiesStore } from '@/stores/cities.js'
 import { onMounted, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useCitiesStore } from '@/stores/cities.js'
 import Loader from '@/components/Base/Loader.vue'
 import Block from '@/components/Block/Block.vue'
-import { storeToRefs } from 'pinia'
 
 const store = useCitiesStore()
 const loading = ref(true)
@@ -36,8 +36,9 @@ onMounted(() => {
             v-for="city of favoriteCities"
             :key="city.idRes"
             :city="city"
-            :is-fav="favoriteCitiesId.includes(city.idRes)"
+            :is-fav="favoriteCitiesId.some((item) => item.idRes === city.idRes)"
             is-hide-form
+            is-seven-days
           />
         </div>
         <div v-else class="favorites-page__empty">{{ $t('dont_have_favorite') }}</div>

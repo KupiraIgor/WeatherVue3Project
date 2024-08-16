@@ -41,6 +41,9 @@ defineProps({
       <div class="block-info__item">
         {{ $t('wind_speed') }}: <span>{{ city.wind_speed }}m/s</span>
       </div>
+      <div class="block-info__item">
+        {{ $t('dew_point') }}: <span>{{ city.dew_point }}°C</span>
+      </div>
     </div>
   </div>
 </template>

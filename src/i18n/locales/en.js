@@ -41,5 +41,7 @@ export const en = {
   dont_have_favorite: "You don't have a weather favorite yet",
   weather: 'Weather',
   you_definitely_want_to_delete_from:
-    'You definitely want to delete the weather for {city} from favorite?'
+    'You definitely want to delete the weather for {city} from favorite?',
+  seven_days: '7 days',
+  dew_point: 'Dew point'
 }

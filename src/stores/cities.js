@@ -4,9 +4,9 @@ import axiosInstance from '@/api/axiosConfig.js'
 import axios from 'axios'
 import { i18n } from '@/i18n'
 import {
-  calculateDailyAverages,
-  calculateDailyExtremes,
-  processWeatherData
+  processWeatherDataDailyFiveDay,
+  processWeatherDataDailyForChart,
+  processWeatherDataHourlyForChart
 } from '@/functions/index.js'
 
 export const useCitiesStore = defineStore('cities', () => {
@@ -25,7 +25,7 @@ export const useCitiesStore = defineStore('cities', () => {
     }
   }
 
-  const generateObjCity = (weather, forecast) => {
+  const generateObjCity = (weather, oneCall) => {
     const objCity = {}
 
     objCity.name = weather.name
@@ -39,40 +39,72 @@ export const useCitiesStore = defineStore('cities', () => {
     objCity.visibility = weather.visibility
     objCity.pressure = weather.main.pressure
     objCity.idRes = weather.id
+    objCity.lon = weather.coord.lon
+    objCity.lat = weather.coord.lat
 
-    objCity.hourlyOneDayForChart = processWeatherData(forecast.list.slice(0, 9))
-    objCity.hourlyFiveDaysForChart = calculateDailyAverages(forecast.list)
-    objCity.hourlyFiveDays = calculateDailyExtremes(forecast.list)
+    objCity.hourlyOneDayForChart = processWeatherDataHourlyForChart(oneCall.hourly.slice(0, 25))
+    objCity.dailyFiveDaysForChart = processWeatherDataDailyForChart(oneCall.daily.slice(0, 5))
+    objCity.dailySevenDaysForChart = processWeatherDataDailyForChart(oneCall.daily.slice(0, 7))
+    objCity.dailyFiveDays = processWeatherDataDailyFiveDay(oneCall.daily.slice(0, 5))
+    objCity.dailySevenDays = processWeatherDataDailyFiveDay(oneCall.daily.slice(0, 7))
 
+    objCity.daily = oneCall.daily
+    objCity.hourly = oneCall.hourly
+    objCity.dew_point = oneCall.current.dew_point
     return objCity
   }
 
-  const getWeather = async (city, id) => {
+  const getWeatherOneCall = async (city, id) => {
     try {
       const params = {
         units: 'metric',
         lang: i18n.global.locale.value,
         ...(id ? { id } : { q: city })
       }
-
-      const [weatherResponse, forecastResponse] = await Promise.all([
-        axiosInstance.get('weather', { params }),
-        axiosInstance.get('forecast', { params })
-      ])
-
-      return { weather: weatherResponse, forecast: forecastResponse }
+      const weather = await axiosInstance.get('weather', { params })
+      const oneCall = await axiosInstance.get('onecall', {
+        params: {
+          lat: weather.data.coord.lat,
+          lon: weather.data.coord.lon,
+          units: 'metric',
+          lang: i18n.global.locale.value
+        }
+      })
+      return { weather, oneCall }
     } catch (error) {
       console.error('Error fetching weather data:', error)
       throw error
     }
   }
 
-  const getWeatherCityObj = async () => {
-    const { weather, forecast } = await getWeather(userCityFromIpAddress.value)
-    const objCity = generateObjCity(weather.data, forecast.data)
+  const getWeatherOneCallCityObj = async () => {
+    const { weather, oneCall } = await getWeatherOneCall(userCityFromIpAddress.value)
+    const objCity = generateObjCity(weather.data, oneCall.data)
     objCity.id = idCity.value
-
     cities.value.push(objCity)
+  }
+
+  const getCitiesForSearch = async (city) => {
+    try {
+      const response = await axiosInstance.get(`find?q=${city}`)
+      return response.data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  const getUpdateWeatherFromSearch = async (idRes, id) => {
+    let index = cities.value.findIndex((obj) => obj.id === id)
+
+    const { weather, oneCall } = await getWeatherOneCall(null, idRes)
+    const objCity = generateObjCity(weather.data, oneCall.data)
+
+    objCity.id = idCity.value
+    idCity.value += 1
+
+    if (index !== -1) {
+      cities.value[index] = objCity
+    }
   }
 
   const addCity = () => {
@@ -89,29 +121,6 @@ export const useCitiesStore = defineStore('cities', () => {
     }
   }
 
-  const getUpdateWeatherFromSearch = async (idRes, id) => {
-    let index = cities.value.findIndex((obj) => obj.id === id)
-
-    const { weather, forecast } = await getWeather(null, idRes)
-    const objCity = generateObjCity(weather.data, forecast.data)
-
-    objCity.id = idCity.value
-    idCity.value += 1
-
-    if (index !== -1) {
-      cities.value[index] = objCity
-    }
-  }
-
-  const getCitiesForSearch = async (city) => {
-    try {
-      const response = await axiosInstance.get(`find?q=${city}`)
-      return response.data
-    } catch (error) {
-      throw error
-    }
-  }
-
   const deleteCity = (id) => {
     const index = cities.value.findIndex((item) => item.id === id)
 
@@ -122,10 +131,14 @@ export const useCitiesStore = defineStore('cities', () => {
 
   const addToFavorites = (city) => {
     if (favoriteCitiesId.value.length < 5) {
-      const isExists = favoriteCitiesId.value.includes(city.idRes)
+      const isExists = favoriteCitiesId.value.some((item) => item.idRes === city.idRes)
 
       if (!isExists) {
-        favoriteCitiesId.value.push(city.idRes)
+        const obj = {}
+        obj.idRes = city.idRes
+        obj.lon = city.lon
+        obj.lat = city.lat
+        favoriteCitiesId.value.push(obj)
         localStorage.setItem('favoriteCities', JSON.stringify(favoriteCitiesId.value))
       }
 
@@ -136,7 +149,7 @@ export const useCitiesStore = defineStore('cities', () => {
   }
 
   const deleteFromFavorites = (city) => {
-    const index = favoriteCitiesId.value.findIndex((item) => item === city.idRes)
+    const index = favoriteCitiesId.value.findIndex((item) => item.idRes === city.idRes)
 
     if (index !== -1) {
       favoriteCitiesId.value.splice(index, 1)
@@ -155,27 +168,30 @@ export const useCitiesStore = defineStore('cities', () => {
   const getFavoriteCities = async () => {
     if (favoriteCitiesId.value.length) {
       try {
-        const weatherPromises = favoriteCitiesId.value.flatMap((id) => [
+        const weatherPromises = favoriteCitiesId.value.flatMap((item) => [
           axiosInstance.get('weather', {
-            params: { id: id, units: 'metric', lang: i18n.global.locale.value }
+            params: { id: item.idRes, units: 'metric', lang: i18n.global.locale.value }
           }),
-          axiosInstance.get('forecast', {
-            params: { id: id, units: 'metric', lang: i18n.global.locale.value }
+          axiosInstance.get('onecall', {
+            params: {
+              lat: item.lat,
+              lon: item.lon,
+              units: 'metric',
+              lang: i18n.global.locale.value
+            }
           })
         ])
-
         const weatherResponses = await Promise.all(weatherPromises)
         favoriteCities.value = []
         const weatherData = []
         for (let i = 0; i < weatherResponses.length; i += 2) {
           weatherData.push({
             weather: weatherResponses[i].data,
-            forecast: weatherResponses[i + 1].data
+            oneCall: weatherResponses[i + 1].data
           })
         }
-
         weatherData.forEach((item) => {
-          favoriteCities.value.push(generateObjCity(item.weather, item.forecast))
+          favoriteCities.value.push(generateObjCity(item.weather, item.oneCall))
         })
       } catch (error) {
         console.error('Error fetching weather data:', error)
@@ -189,8 +205,8 @@ export const useCitiesStore = defineStore('cities', () => {
   const updateCityWithChangeLang = () => {
     cities.value.forEach(async (item) => {
       if (item.idRes) {
-        const { weather, forecast } = await getWeather(item.name)
-        const objCity = generateObjCity(weather.data, forecast.data)
+        const { weather, oneCall } = await getWeatherOneCall(item.name)
+        const objCity = generateObjCity(weather.data, oneCall.data)
         objCity.id = item.id
 
         const index = cities.value.findIndex((i) => i.id === item.id)
@@ -207,7 +223,6 @@ export const useCitiesStore = defineStore('cities', () => {
     cities,
     favoriteCities,
     favoriteCitiesId,
-    getWeatherCityObj,
     getIpUserFromIpAddress,
     getCitiesForSearch,
     getUpdateWeatherFromSearch,
@@ -216,6 +231,8 @@ export const useCitiesStore = defineStore('cities', () => {
     addCity,
     deleteFromFavorites,
     getFavoriteCities,
-    updateCityWithChangeLang
+    updateCityWithChangeLang,
+    getWeatherOneCall,
+    getWeatherOneCallCityObj
   }
 })

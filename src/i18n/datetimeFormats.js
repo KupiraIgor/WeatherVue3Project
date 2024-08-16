@@ -1,5 +1,6 @@
 export default {
   en: {
+    hour: { hour: 'numeric', minute: 'numeric' },
     short: {
       weekday: 'short',
       month: 'short',
@@ -15,6 +16,7 @@ export default {
     }
   },
   uk: {
+    hour: { hour: 'numeric', minute: 'numeric' },
     short: {
       weekday: 'short',
       month: 'short',

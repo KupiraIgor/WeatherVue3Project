@@ -26,7 +26,7 @@ const fetchData = async () => {
   }
   try {
     await store.getIpUserFromIpAddress()
-    await store.getWeatherCityObj()
+    await store.getWeatherOneCallCityObj()
   } catch (err) {
     console.error(err)
   } finally {
@@ -63,7 +63,7 @@ onMounted(() => {
             v-for="city of cities"
             :key="city.id"
             :city="city"
-            :is-fav="favoriteCitiesId.includes(city.idRes)"
+            :is-fav="favoriteCitiesId.some((item) => item.idRes === city.idRes)"
           />
         </div>
         <div v-else class="home-page__empty">{{ $t('add_weather') }}</div>

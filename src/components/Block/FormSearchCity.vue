@@ -1,11 +1,11 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
+import { i18n } from '@/i18n'
 import { required, minLength, helpers } from '@vuelidate/validators'
 import { useCitiesStore } from '@/stores/cities.js'
 import Input from '@/components/Base/Input.vue'
 import Button from '@/components/Base/Button.vue'
-import { i18n } from '@/i18n'
 
 const props = defineProps({
   id: {
@@ -167,6 +167,12 @@ onMounted(() => {
       .base-input__field {
         width: 100%;
       }
+    }
+  }
+
+  @media (max-width: 500px) {
+    &__select {
+      top: 3.9rem;
     }
   }
 }

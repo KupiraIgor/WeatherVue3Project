@@ -2,10 +2,10 @@
 import { ref } from 'vue'
 import { useCitiesStore } from '@/stores/cities.js'
 import FormSearchCity from '@/components/Block/FormSearchCity.vue'
-import Button from '@/components/Base/Button.vue'
-import Modal from '@/components/Base/Modal.vue'
 import BlockBodyInfo from '@/components/Block/BlockWeather.vue'
 import Loader from '@/components/Base/Loader.vue'
+import Button from '@/components/Base/Button.vue'
+import Modal from '@/components/Base/Modal.vue'
 
 const props = defineProps({
   city: {
@@ -17,6 +17,10 @@ const props = defineProps({
     default: false
   },
   isHideForm: {
+    type: Boolean,
+    default: false
+  },
+  isSevenDays: {
     type: Boolean,
     default: false
   }
@@ -70,7 +74,7 @@ const onDeleteFromFavorites = () => {
   <div class="block" :class="{ _fav: isFav }">
     <div class="block__header" :class="{ _hide: isHideForm }">
       <FormSearchCity v-if="!isHideForm" :id="city.id" @loading="(arg) => (loading = arg)" />
-      <div class="block__buttons">
+      <div class="block__buttons" :class="{ _hide: isHideForm }">
         <template v-if="city.idRes">
           <Button v-if="isFav" color="red" @click="onShowModalDeleteFav" class="block__btn">
             {{ $t('delete_from') }}
@@ -85,7 +89,7 @@ const onDeleteFromFavorites = () => {
       </div>
     </div>
     <div v-if="city.idRes" class="block__body">
-      <BlockBodyInfo :city="city" />
+      <BlockBodyInfo :city="city" :is-seven-days="isSevenDays" />
     </div>
     <Modal ref="modalDeleteEl">
       <div class="block__modal">
@@ -140,13 +144,21 @@ const onDeleteFromFavorites = () => {
     border-bottom: 1px solid var(--color-gray);
 
     &._hide {
-      justify-content: end;
+      border: none;
+      padding-bottom: 0;
+      margin-bottom: 0;
     }
   }
 
   &__buttons {
     display: flex;
     gap: 2rem;
+
+    &._hide {
+      position: absolute;
+      top: 2.5rem;
+      right: 2.5rem;
+    }
   }
 
   &__modal {
@@ -176,6 +188,10 @@ const onDeleteFromFavorites = () => {
 
     &__buttons {
       width: 100%;
+
+      &._hide {
+        width: auto;
+      }
     }
 
     &__btn {
@@ -184,8 +200,21 @@ const onDeleteFromFavorites = () => {
   }
 
   @media (max-width: 500px) {
+    padding: 2rem;
+
+    &__header {
+      &._hide {
+        margin-bottom: 2rem;
+      }
+    }
+
     &__buttons {
       flex-wrap: wrap;
+
+      &._hide {
+        position: static;
+        width: 100%;
+      }
     }
   }
 }

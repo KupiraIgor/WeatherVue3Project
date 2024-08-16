@@ -88,5 +88,9 @@ const emit = defineEmits(['click'])
   &._orange {
     background: var(--color-orange);
   }
+
+  @media (max-width: 500px) {
+    min-height: 4.5rem;
+  }
 }
 </style>

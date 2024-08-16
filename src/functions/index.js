@@ -17,78 +17,29 @@ export function metersToKilometers(meters) {
   return meters / 1000 + 'km'
 }
 
-export const calculateDailyExtremes = (hourlyData) => {
-  const days = {}
-
-  hourlyData.forEach((item) => {
-    const date = new Date(item.dt_txt)
-    const dateString = date.toISOString().split('T')[0]
-
-    if (!days[dateString]) {
-      days[dateString] = {
-        minTemp: item.main.temp,
-        maxTemp: item.main.temp,
-        iconCounts: {},
-        descriptionCounts: {},
-        mostFrequentIcon: item.weather[0].icon
-      }
-    } else {
-      if (item.main.temp < days[dateString].minTemp) {
-        days[dateString].minTemp = item.main.temp
-      }
-      if (item.main.temp > days[dateString].maxTemp) {
-        days[dateString].maxTemp = item.main.temp
-      }
-    }
-
-    const icon = item.weather[0].icon
-
-    days[dateString].iconCounts[icon] = (days[dateString].iconCounts[icon] || 0) + 1
-  })
-
-  return Object.keys(days).map((date) => {
-    const day = days[date]
-
-    const mostFrequentIcon = Object.keys(day.iconCounts).reduce((a, b) =>
-      day.iconCounts[a] > day.iconCounts[b] ? a : b
-    )
-
+export const processWeatherDataDailyFiveDay = (data) => {
+  return data.map((item) => {
     return {
-      date: date,
-      minTemp: Math.round(day.minTemp),
-      maxTemp: Math.round(day.maxTemp),
-      icon: mostFrequentIcon
+      date: new Date(item.dt * 1000),
+      maxTemp: item.temp.max,
+      minTemp: item.temp.min,
+      icon: item.weather[0].icon,
+      id: item.id
     }
   })
 }
 
-export const calculateDailyAverages = (forecastData) => {
-  const days = {}
-
-  forecastData.forEach((item) => {
-    const date = item.dt_txt.split(' ')[0]
-
-    if (!days[date]) {
-      days[date] = { sum: 0, count: 0 }
-    }
-
-    days[date].sum += item.main.temp
-    days[date].count += 1
-  })
-
-  const labelsKeys = Object.keys(days)
-  const labels = labelsKeys.map((item) => {
-    return i18n.global.d(item, 'short')
-  })
-
-  const temperatures = labelsKeys.map((date) => days[date].sum / days[date].count)
+export const processWeatherDataDailyForChart = (data) => {
+  const labels = data.map((entry) => i18n.global.d(new Date(entry.dt * 1000), 'short'))
+  const temperatures = data.map((entry) => entry.temp.day)
 
   return { labels, temperatures }
 }
 
-export const processWeatherData = (oneDayForecast) => {
-  const labels = oneDayForecast.map((entry) => entry.dt_txt.split(' ')[1]) // тільки час
-  const temperatures = oneDayForecast.map((entry) => entry.main.temp)
+export const processWeatherDataHourlyForChart = (data) => {
+  const arr = data.map((entry) => i18n.global.d(new Date(entry.dt * 1000), 'hour'))
+  const temperatures = data.map((entry) => entry.temp)
+  const labels = arr.filter((_, index) => index % 2 === 0)
 
   return { labels, temperatures }
 }

@@ -1,6 +1,6 @@
 export const uk = {
   add_city: 'Додати місто',
-  add_weather: 'Додати прогноз погоди',
+  add_weather: 'Додайте прогноз погоди',
   maximum_cities_5: 'Максимальна кількість міст — 5, видаліть, щоб додати більше',
   calm: 'Спокійно',
   light_air: 'Легкий вітер',
@@ -40,5 +40,7 @@ export const uk = {
   delete_from: 'Видалити з вибраного',
   dont_have_favorite: 'У вас ще немає улюбленої погоди',
   weather: 'Погода',
-  you_definitely_want_to_delete_from: 'Ви точно хочете видалити погоду для {city} з вибраного?'
+  you_definitely_want_to_delete_from: 'Ви точно хочете видалити погоду для {city} з вибраного?',
+  seven_days: '7 днів',
+  dew_point: 'Точка роси'
 }

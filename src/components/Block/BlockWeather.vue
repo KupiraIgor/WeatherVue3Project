@@ -1,18 +1,28 @@
 <script setup>
-import Tab from '@/components/Base/Tab.vue'
 import { ref } from 'vue'
-import CardOneDay from '@/components/Base/CardOneDay.vue'
 import BlockWeatherInfo from '@/components/Block/BlockWeatherInfo.vue'
+import CardOneDay from '@/components/Base/CardOneDay.vue'
 import Chart from '@/components/Base/Chart.vue'
+import Tab from '@/components/Base/Tab.vue'
 
-defineProps({
+const props = defineProps({
   city: {
     type: Object,
     required: true
+  },
+  isSevenDays: {
+    type: Boolean,
+    default: false
   }
 })
 
 const activeTab = ref('day')
+
+const tabs = [
+  { text: 'one_day', tab: 'day', show: true },
+  { text: 'five_days', tab: '5days', show: !props.isSevenDays },
+  { text: 'seven_days', tab: '7days', show: props.isSevenDays }
+]
 
 const onChoiceTab = (tab) => {
   activeTab.value = tab
@@ -23,25 +33,24 @@ const onChoiceTab = (tab) => {
   <div class="block-body">
     <div class="block-body__wrap">
       <div class="block-body__tabs">
-        <Tab
-          class="block-body__tag"
-          @click="onChoiceTab('day')"
-          :class="{ _active: activeTab === 'day' }"
-        >
-          {{ $t('one_day') }}
-        </Tab>
-        <Tab
-          class="block-body__tag"
-          @click="onChoiceTab('5days')"
-          :class="{ _active: activeTab === '5days' }"
-        >
-          {{ $t('five_days') }}
-        </Tab>
+        <template v-for="tab of tabs">
+          <Tab
+            v-if="tab.show"
+            class="block-body__tag"
+            @click="onChoiceTab(tab.tab)"
+            :class="{ _active: activeTab === tab.tab }"
+          >
+            {{ $t(tab.text) }}
+          </Tab>
+        </template>
       </div>
       <h2 class="block-body__city">{{ city.name }}, {{ city.country }}</h2>
       <BlockWeatherInfo v-if="activeTab === 'day'" :city="city" />
-      <div class="block-body__days" v-else-if="activeTab === '5days'">
-        <CardOneDay v-for="day of city.hourlyFiveDays" :day="day" :id="city.id" />
+      <div class="block-body__days" v-else-if="activeTab === '5days' && !isSevenDays">
+        <CardOneDay v-for="day of city.dailyFiveDays" :day="day" :id="city.id" />
+      </div>
+      <div class="block-body__days" v-else-if="activeTab === '7days' && isSevenDays">
+        <CardOneDay v-for="day of city.dailySevenDays" :day="day" :id="city.id" />
       </div>
     </div>
 
@@ -53,7 +62,13 @@ const onChoiceTab = (tab) => {
     />
     <Chart
       v-else-if="activeTab === '5days'"
-      :hourly-data="city.hourlyFiveDaysForChart"
+      :hourly-data="city.dailyFiveDaysForChart"
+      :title="$t('daily_forecast')"
+      :title-bottom="$t('day')"
+    />
+    <Chart
+      v-else-if="activeTab === '7days'"
+      :hourly-data="city.dailySevenDaysForChart"
       :title="$t('daily_forecast')"
       :title-bottom="$t('day')"
     />
@@ -76,7 +91,7 @@ const onChoiceTab = (tab) => {
 
   &__days {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
     grid-gap: 2rem;
   }
 
@@ -84,11 +99,6 @@ const onChoiceTab = (tab) => {
     font-size: 2.5rem;
     font-weight: 600;
     margin-bottom: 1.5rem;
-  }
-
-  @media (max-width: 768px) {
-    &__days {
-    }
   }
 }
 </style>

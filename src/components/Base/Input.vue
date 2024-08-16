@@ -79,5 +79,12 @@ const emit = defineEmits(['update:modelValue', 'blur', 'focus'])
       white-space: nowrap;
     }
   }
+
+  @media (max-width: 500px) {
+    &__field {
+      min-height: 4.5rem;
+      padding: 0.5rem 1.6rem;
+    }
+  }
 }
 </style>
