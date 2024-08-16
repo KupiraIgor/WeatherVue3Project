@@ -4,6 +4,10 @@ defineProps({
     type: String,
     default: ''
   },
+  type: {
+    type: String,
+    default: 'text'
+  },
   placeholder: {
     type: String,
     default: ''
@@ -25,7 +29,7 @@ const emit = defineEmits(['update:modelValue', 'blur', 'focus'])
   <div class="base-input" :class="{ _error: error }">
     <input
       class="base-input__field"
-      type="text"
+      :type="type"
       :value="modelValue"
       :placeholder="placeholder"
       @input="emit('update:modelValue', $event.target.value)"

@@ -75,6 +75,7 @@ onMounted(() => {
         v-model="formData.city"
         :error="v$.city.$errors.length"
         :errors="v$.city.$errors"
+        type="search"
         :placeholder="$t('enter_city')"
         @focus="isFocusInput = true"
         @blur="isFocusInput = false"
