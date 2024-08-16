@@ -5,7 +5,7 @@ import { required, minLength, helpers } from '@vuelidate/validators'
 import { useCitiesStore } from '@/stores/cities.js'
 import Input from '@/components/Base/Input.vue'
 import Button from '@/components/Base/Button.vue'
-import { i18n } from '@/main.js'
+import { i18n } from '@/i18n'
 
 const props = defineProps({
   id: {

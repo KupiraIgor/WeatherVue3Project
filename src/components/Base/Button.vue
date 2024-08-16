@@ -71,5 +71,9 @@ const emit = defineEmits(['click'])
   &._red {
     background: var(--color-red);
   }
+
+  &._orange {
+    background: var(--color-orange);
+  }
 }
 </style>

@@ -11,6 +11,14 @@ const props = defineProps({
   city: {
     type: Object,
     required: true
+  },
+  isFav: {
+    type: Boolean,
+    default: false
+  },
+  isHideForm: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -30,18 +38,32 @@ const onDeleteBlock = () => {
   store.deleteCity(props.city.id)
   onCloseModal()
 }
+
+const onAddToFavorites = () => {
+  store.addToFavorites(props.city)
+}
+
+const onDeleteFromFavorites = () => {
+  store.deleteFromFavorites(props.city)
+}
 </script>
 
 <template>
-  <div class="block">
-    <div class="block__header">
-      <FormSearchCity :id="city.id" @loading="(arg) => (loading = arg)" />
+  <div class="block" :class="{ _fav: isFav }">
+    <div class="block__header" :class="{ _hide: isHideForm }">
+      <FormSearchCity v-if="!isHideForm" :id="city.id" @loading="(arg) => (loading = arg)" />
       <div class="block__buttons">
-        <Button>{{ $t('to_favorites') }}</Button>
-        <Button color="red" @click="onShowModal">{{ $t('delete') }}</Button>
+        <template v-if="city.idRes">
+          <Button v-if="isFav" color="red" @click="onDeleteFromFavorites">
+            {{ $t('delete_from') }}
+          </Button>
+          <Button v-else @click="onAddToFavorites">{{ $t('to_favorites') }}</Button>
+        </template>
+
+        <Button v-if="!isHideForm" color="red" @click="onShowModal">{{ $t('delete') }}</Button>
       </div>
     </div>
-    <div class="block__body">
+    <div v-if="city.idRes" class="block__body">
       <BlockBodyInfo :city="city" />
     </div>
     <Modal ref="modalEl">
@@ -67,6 +89,10 @@ const onDeleteBlock = () => {
   border-radius: 1rem;
   padding: 2.5rem;
 
+  &._fav {
+    border-color: var(--color-orange);
+  }
+
   &__header {
     display: flex;
     justify-content: space-between;
@@ -74,6 +100,10 @@ const onDeleteBlock = () => {
     padding-bottom: 3rem;
     margin-bottom: 2rem;
     border-bottom: 1px solid var(--color-gray);
+
+    &._hide {
+      justify-content: end;
+    }
   }
 
   &__buttons {

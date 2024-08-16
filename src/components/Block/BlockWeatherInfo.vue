@@ -1,10 +1,5 @@
 <script setup>
-import moment from 'moment/min/moment-with-locales'
-import {
-  getWindDescription,
-  metersToKilometers,
-  upperCaseFirstLetter
-} from '@/functions/Functions.js'
+import { getWindDescription, metersToKilometers, upperCaseFirstLetter } from '@/functions/index.js'
 
 defineProps({
   city: {
@@ -17,7 +12,9 @@ defineProps({
 <template>
   <div class="block-info">
     <div class="block-info__left">
-      <div class="block-info__date">{{ moment().format('MMMM Do YYYY, h:mm a') }}</div>
+      <div class="block-info__date">
+        {{ $d(new Date(), 'long') }}
+      </div>
       <div class="block-info__temp">
         <img
           :src="`http://openweathermap.org/img/wn/${city.icon}@2x.png`"

@@ -1,5 +1,4 @@
-import { i18n } from '@/main.js'
-import moment from 'moment/min/moment-with-locales'
+import { i18n } from '@/i18n'
 export const getWindDescription = (speed) => {
   if (speed <= 0.2) return i18n.global.t('calm')
   if (speed <= 1.5) return i18n.global.t('light_air')
@@ -55,7 +54,7 @@ export const calculateDailyExtremes = (hourlyData) => {
     )
 
     return {
-      date: moment(date).format('ddd, MMM D'),
+      date: i18n.global.d(date, 'short'),
       minTemp: Math.round(day.minTemp),
       maxTemp: Math.round(day.maxTemp),
       icon: mostFrequentIcon
@@ -79,7 +78,7 @@ export const calculateDailyAverages = (forecastData) => {
 
   const labelsKeys = Object.keys(days)
   const labels = labelsKeys.map((item) => {
-    return moment(item).format('ddd, MMM D')
+    return i18n.global.d(item, 'short')
   })
 
   const temperatures = labelsKeys.map((date) => days[date].sum / days[date].count)

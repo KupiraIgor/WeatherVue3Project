@@ -35,5 +35,7 @@ export const uk = {
   should_be_at_least_3: 'Це поле повинно містити щонайменше 3 символи',
   temperature: 'Температура',
   max: 'Макс.',
-  min: 'Мін.'
+  min: 'Мін.',
+  delete_from: 'Видалити з вибраного',
+  dont_have_favorite: 'У вас ще немає улюбленої погоди'
 }

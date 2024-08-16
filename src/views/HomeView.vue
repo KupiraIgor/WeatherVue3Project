@@ -9,6 +9,7 @@ import Modal from '@/components/Base/Modal.vue'
 
 const store = useCitiesStore()
 const { cities } = storeToRefs(store)
+const { favoriteCitiesId } = storeToRefs(store)
 
 const modalEl = ref()
 const loading = ref(true)
@@ -19,6 +20,10 @@ const onShowModal = () => {
 }
 
 const fetchData = async () => {
+  if (cities.value.length) {
+    loading.value = false
+    return
+  }
   try {
     await store.getIpUserFromIpAddress()
     await store.getWeatherCityObj()
@@ -29,10 +34,10 @@ const fetchData = async () => {
   }
 }
 
-const onAddCity = async () => {
+const onAddCity = () => {
   loadingBtn.value = true
   try {
-    const response = await store.getWeatherCityObj()
+    const response = store.addCity()
     if (!response) {
       onShowModal()
     }
@@ -54,7 +59,12 @@ onMounted(() => {
       <Loader v-if="loading" />
       <template v-else>
         <div v-if="cities.length" class="home-page__items">
-          <Block v-for="city of cities" :key="city.id" :city="city" />
+          <Block
+            v-for="city of cities"
+            :key="city.id"
+            :city="city"
+            :is-fav="favoriteCitiesId.includes(city.idRes)"
+          />
         </div>
         <div v-else class="home-page__empty">{{ $t('add_weather') }}</div>
         <div class="home-page__btn">

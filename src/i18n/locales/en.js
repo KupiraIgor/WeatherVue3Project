@@ -35,5 +35,7 @@ export const en = {
   should_be_at_least_3: 'This field should be at least 3 characters long',
   temperature: 'Temperature',
   max: 'Max',
-  min: 'Min'
+  min: 'Min',
+  delete_from: 'Delete from favorites',
+  dont_have_favorite: "You don't have a weather favorite yet"
 }

@@ -6,12 +6,14 @@ import {
   calculateDailyAverages,
   calculateDailyExtremes,
   processWeatherData
-} from '@/functions/Functions.js'
-import { i18n } from '@/main.js'
+} from '@/functions/index.js'
+import { i18n } from '@/i18n'
 
 export const useCitiesStore = defineStore('cities', () => {
   const userCityFromIpAddress = ref(null)
   const cities = ref([])
+  const favoriteCitiesId = ref(JSON.parse(localStorage.getItem('favoriteCities')) || [])
+  const favoriteCities = ref([])
   const idCity = ref(0)
 
   const getIpUserFromIpAddress = async () => {
@@ -36,6 +38,7 @@ export const useCitiesStore = defineStore('cities', () => {
     objCity.humidity = weather.main.humidity
     objCity.visibility = weather.visibility
     objCity.pressure = weather.main.pressure
+    objCity.idRes = weather.id
 
     objCity.hourlyOneDayForChart = processWeatherData(forecast.list.slice(0, 9))
     objCity.hourlyFiveDaysForChart = calculateDailyAverages(forecast.list)
@@ -63,12 +66,19 @@ export const useCitiesStore = defineStore('cities', () => {
   }
 
   const getWeatherCityObj = async () => {
-    if (cities.value.length < 5) {
-      const { weather, forecast } = await getWeather(userCityFromIpAddress.value)
-      const objCity = generateObjCity(weather.data, forecast.data)
+    const { weather, forecast } = await getWeather(userCityFromIpAddress.value)
+    const objCity = generateObjCity(weather.data, forecast.data)
+    objCity.id = idCity.value
 
-      objCity.id = idCity.value
+    cities.value.push(objCity)
+  }
+
+  const addCity = () => {
+    if (cities.value.length < 5) {
+      const objCity = {}
       idCity.value += 1
+      objCity.id = idCity.value
+      objCity.idRes = null
 
       cities.value.push(objCity)
       return true
@@ -108,12 +118,79 @@ export const useCitiesStore = defineStore('cities', () => {
     }
   }
 
+  const addToFavorites = (city) => {
+    const isExists = favoriteCitiesId.value.includes(city.idRes)
+
+    if (!isExists) {
+      favoriteCitiesId.value.push(city.idRes)
+      localStorage.setItem('favoriteCities', JSON.stringify(favoriteCitiesId.value))
+    }
+  }
+
+  const deleteFromFavorites = (city) => {
+    const index = favoriteCitiesId.value.findIndex((item) => item === city.idRes)
+
+    if (index !== -1) {
+      favoriteCitiesId.value.splice(index, 1)
+      localStorage.setItem('favoriteCities', JSON.stringify(favoriteCitiesId.value))
+    }
+
+    if (favoriteCities.value.length) {
+      const index = favoriteCities.value.findIndex((item) => item.idRes === city.idRes)
+
+      if (index !== -1) {
+        favoriteCities.value.splice(index, 1)
+      }
+    }
+  }
+
+  const getFavoriteCities = async () => {
+    if (favoriteCitiesId.value.length) {
+      favoriteCities.value = []
+      try {
+        const weatherPromises = favoriteCitiesId.value.flatMap((id) => [
+          axiosInstance.get('weather', {
+            params: { id: id, units: 'metric', lang: i18n.global.locale.value }
+          }),
+          axiosInstance.get('forecast', {
+            params: { id: id, units: 'metric', lang: i18n.global.locale.value }
+          })
+        ])
+
+        const weatherResponses = await Promise.all(weatherPromises)
+
+        const weatherData = []
+        for (let i = 0; i < weatherResponses.length; i += 2) {
+          weatherData.push({
+            weather: weatherResponses[i].data,
+            forecast: weatherResponses[i + 1].data
+          })
+        }
+
+        weatherData.forEach((item) => {
+          favoriteCities.value.push(generateObjCity(item.weather, item.forecast))
+        })
+      } catch (error) {
+        console.error('Error fetching weather data:', error)
+        throw error
+      }
+    } else {
+      return null
+    }
+  }
+
   return {
     cities,
+    favoriteCities,
+    favoriteCitiesId,
     getWeatherCityObj,
     getIpUserFromIpAddress,
     getCitiesForSearch,
     getUpdateWeatherFromSearch,
-    deleteCity
+    deleteCity,
+    addToFavorites,
+    addCity,
+    deleteFromFavorites,
+    getFavoriteCities
   }
 })

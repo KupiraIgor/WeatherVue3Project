@@ -1,7 +1,7 @@
 <script setup>
 import { Chart } from 'chart.js/auto'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
-import { i18n } from '@/main.js'
+import { i18n } from '@/i18n'
 
 const props = defineProps({
   hourlyData: {

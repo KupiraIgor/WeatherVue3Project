@@ -1,14 +1,10 @@
 <script setup>
-import { i18n } from '@/main.js'
-import moment from 'moment/min/moment-with-locales'
-
-const locale = i18n.global.locale
+import { i18n } from '@/i18n'
 
 const changeLanguage = (locale) => {
-  i18n.global.locale = locale
-  moment.locale(locale)
+  i18n.global.locale.value = locale
   localStorage.setItem('appLanguage', locale)
-  window.location.reload()
+  // window.location.reload()
 }
 </script>
 
@@ -19,13 +15,23 @@ const changeLanguage = (locale) => {
         <RouterLink to="/" class="header__logo">Weather</RouterLink>
         <div class="header__wrap">
           <div class="header__locale">
-            <button @click="changeLanguage('en')" :class="{ _active: locale === 'en' }">en</button>
+            <button
+              @click="changeLanguage('en')"
+              :class="{ _active: i18n.global.locale.value === 'en' }"
+            >
+              en
+            </button>
             <span>/</span>
-            <button @click="changeLanguage('uk')" :class="{ _active: locale === 'uk' }">uk</button>
+            <button
+              @click="changeLanguage('uk')"
+              :class="{ _active: i18n.global.locale.value === 'uk' }"
+            >
+              uk
+            </button>
           </div>
           <nav class="header__nav">
             <RouterLink to="/" class="">{{ $t('home') }}</RouterLink>
-            <RouterLink to="/selected" class="">{{ $t('favorites') }}</RouterLink>
+            <RouterLink to="/favorites" class="">{{ $t('favorites') }}</RouterLink>
           </nav>
         </div>
       </div>
