@@ -28,6 +28,7 @@ export const en = {
   favorites: 'Favorites',
   delete: 'Delete',
   you_definitely_want_to_delete: 'You definitely want to delete the weather for',
+  you_definitely_want: 'You definitely want to delete?',
   yes: 'Yes',
   no: 'No',
   enter_city: 'Enter the city',
@@ -37,5 +38,8 @@ export const en = {
   max: 'Max',
   min: 'Min',
   delete_from: 'Delete from favorites',
-  dont_have_favorite: "You don't have a weather favorite yet"
+  dont_have_favorite: "You don't have a weather favorite yet",
+  weather: 'Weather',
+  you_definitely_want_to_delete_from:
+    'You definitely want to delete the weather for {city} from favorite?'
 }

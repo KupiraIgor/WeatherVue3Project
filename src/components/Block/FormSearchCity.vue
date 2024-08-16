@@ -18,6 +18,7 @@ const emit = defineEmits(['loading'])
 
 const store = useCitiesStore()
 const formData = ref({ city: '' })
+const isFocusInput = ref(false)
 
 const rulesValidate = {
   city: {
@@ -48,10 +49,10 @@ const onSubmitSearchCity = async () => {
   loading.value = false
 }
 
-const onClickUpdateCity = async (name) => {
+const onClickUpdateCity = async (id) => {
   emit('loading', true)
   try {
-    await store.getUpdateWeatherFromSearch(name, props.id)
+    await store.getUpdateWeatherFromSearch(id, props.id)
   } catch (err) {
     console.error(err)
   }
@@ -75,14 +76,16 @@ onMounted(() => {
         :error="v$.city.$errors.length"
         :errors="v$.city.$errors"
         :placeholder="$t('enter_city')"
+        @focus="isFocusInput = true"
+        @blur="isFocusInput = false"
       />
-      <div v-if="isShowSelect" class="form-city__select">
+      <div v-if="isShowSelect" class="form-city__select" :class="{ _focus: isFocusInput }">
         <div v-if="isEmpty" class="form-city__empty">{{ $t('nothing_found') }}</div>
         <template v-else>
           <button
             v-for="item of data.list"
             class="form-city__item"
-            @click="onClickUpdateCity(item.name)"
+            @click="onClickUpdateCity(item.id)"
           >
             <span>{{ item.name }}, {{ item.sys.country }}</span>
             <img
@@ -129,6 +132,11 @@ onMounted(() => {
     top: 4.8rem;
     background: var(--color-white);
     padding: 0.5rem;
+    transition: var(--easing) var(--duration);
+
+    &._focus {
+      border-color: var(--color-black);
+    }
   }
 
   &__item {

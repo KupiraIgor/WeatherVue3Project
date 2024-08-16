@@ -18,7 +18,7 @@ defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'blur', 'focus'])
 </script>
 
 <template>
@@ -29,6 +29,8 @@ const emit = defineEmits(['update:modelValue'])
       :value="modelValue"
       :placeholder="placeholder"
       @input="emit('update:modelValue', $event.target.value)"
+      @blur="emit('blur')"
+      @focus="emit('focus')"
     />
     <span v-for="item of errors" :key="item.$uid" class="base-input__errors">
       <span>{{ item.$message }}</span>
@@ -45,6 +47,11 @@ const emit = defineEmits(['update:modelValue'])
     padding: 1.3rem 1.6rem;
     border-radius: 0.6rem;
     min-height: 5.4rem;
+    transition: var(--easing) var(--duration);
+
+    &:focus {
+      border-color: var(--color-black);
+    }
   }
 
   &._error {

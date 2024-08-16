@@ -1,37 +1,24 @@
 <script setup>
-import { i18n } from '@/i18n'
-
-const changeLanguage = (locale) => {
-  i18n.global.locale.value = locale
-  localStorage.setItem('appLanguage', locale)
-  // window.location.reload()
-}
+import LanguageSwitcher from '@/components/Base/LanguageSwitcher.vue'
+import { Trans } from '@/i18n/index.js'
 </script>
 
 <template>
   <header class="header">
     <div class="container">
       <div class="header__body">
-        <RouterLink to="/" class="header__logo">Weather</RouterLink>
+        <RouterLink :to="Trans.i18nRoute({ name: 'home' })" class="header__logo">
+          Weather
+        </RouterLink>
         <div class="header__wrap">
-          <div class="header__locale">
-            <button
-              @click="changeLanguage('en')"
-              :class="{ _active: i18n.global.locale.value === 'en' }"
-            >
-              en
-            </button>
-            <span>/</span>
-            <button
-              @click="changeLanguage('uk')"
-              :class="{ _active: i18n.global.locale.value === 'uk' }"
-            >
-              uk
-            </button>
-          </div>
+          <LanguageSwitcher />
           <nav class="header__nav">
-            <RouterLink to="/" class="">{{ $t('home') }}</RouterLink>
-            <RouterLink to="/favorites" class="">{{ $t('favorites') }}</RouterLink>
+            <RouterLink :to="Trans.i18nRoute({ name: 'home' })" class="header__link">
+              {{ $t('home') }}
+            </RouterLink>
+            <RouterLink :to="Trans.i18nRoute({ name: 'favorites' })" class="header__link">
+              {{ $t('favorites') }}
+            </RouterLink>
           </nav>
         </div>
       </div>
@@ -63,14 +50,30 @@ const changeLanguage = (locale) => {
     border-radius: 1.5rem;
   }
 
-  &__locale {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  &__link {
+    position: relative;
 
-    button {
-      &._active {
-        font-weight: 600;
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      right: 0;
+      width: 0;
+      height: 1px;
+      background: var(--color-black);
+      transition: var(--easing) var(--duration);
+    }
+
+    &.router-link-exact-active {
+      font-weight: 500;
+      pointer-events: none;
+    }
+
+    &:hover {
+      &::after {
+        width: 100%;
+        right: auto;
+        left: 0;
       }
     }
   }

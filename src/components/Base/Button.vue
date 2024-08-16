@@ -50,6 +50,18 @@ const emit = defineEmits(['click'])
   color: var(--color-white);
   border-radius: 0.6rem;
   overflow: hidden;
+  transition: var(--easing) var(--duration);
+  box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.3);
+
+  &:hover,
+  &:focus {
+    box-shadow: none;
+    opacity: 0.9;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 
   .base-loader {
     transform: scale(0.8);

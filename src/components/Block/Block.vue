@@ -23,28 +23,46 @@ const props = defineProps({
 })
 
 const store = useCitiesStore()
-const modalEl = ref()
+const modalDeleteEl = ref()
+const modalMaxEl = ref()
+const modalDeleteFavEl = ref()
 const loading = ref(false)
 
-const onShowModal = () => {
-  modalEl.value.open()
+const onShowModalDelete = () => {
+  modalDeleteEl.value.open()
 }
 
-const onCloseModal = () => {
-  modalEl.value.close()
+const onShowModalDeleteFav = () => {
+  modalDeleteFavEl.value.open()
+}
+
+const onShowModalMax = () => {
+  modalMaxEl.value.open()
+}
+
+const onCloseModalDelete = () => {
+  modalDeleteEl.value.close()
+}
+
+const onCloseModalDeleteFav = () => {
+  modalDeleteFavEl.value.close()
 }
 
 const onDeleteBlock = () => {
   store.deleteCity(props.city.id)
-  onCloseModal()
+  onCloseModalDelete()
 }
 
 const onAddToFavorites = () => {
-  store.addToFavorites(props.city)
+  const response = store.addToFavorites(props.city)
+  if (!response) {
+    onShowModalMax()
+  }
 }
 
 const onDeleteFromFavorites = () => {
   store.deleteFromFavorites(props.city)
+  onCloseModalDeleteFav()
 }
 </script>
 
@@ -54,28 +72,47 @@ const onDeleteFromFavorites = () => {
       <FormSearchCity v-if="!isHideForm" :id="city.id" @loading="(arg) => (loading = arg)" />
       <div class="block__buttons">
         <template v-if="city.idRes">
-          <Button v-if="isFav" color="red" @click="onDeleteFromFavorites">
+          <Button v-if="isFav" color="red" @click="onShowModalDeleteFav">
             {{ $t('delete_from') }}
           </Button>
           <Button v-else @click="onAddToFavorites">{{ $t('to_favorites') }}</Button>
         </template>
 
-        <Button v-if="!isHideForm" color="red" @click="onShowModal">{{ $t('delete') }}</Button>
+        <Button v-if="!isHideForm" color="red" @click="onShowModalDelete">
+          {{ $t('delete') }}
+        </Button>
       </div>
     </div>
     <div v-if="city.idRes" class="block__body">
       <BlockBodyInfo :city="city" />
     </div>
-    <Modal ref="modalEl">
+    <Modal ref="modalDeleteEl">
       <div class="block__modal">
         <div class="block__modal-text">
-          {{ $t('you_definitely_want_to_delete') }} {{ city.name }}?
+          <template v-if="city.name">
+            {{ $t('you_definitely_want_to_delete') }} {{ city.name }}?
+          </template>
+          <template v-else>{{ $t('you_definitely_want') }}</template>
         </div>
         <div class="block__modal-buttons">
           <Button @click="onDeleteBlock">{{ $t('yes') }}</Button>
-          <Button @click="onCloseModal">{{ $t('no') }}</Button>
+          <Button @click="onCloseModalDelete">{{ $t('no') }}</Button>
         </div>
       </div>
+    </Modal>
+    <Modal ref="modalDeleteFavEl">
+      <div class="block__modal">
+        <div class="block__modal-text">
+          {{ $t('you_definitely_want_to_delete_from', { city: city.name }) }}
+        </div>
+        <div class="block__modal-buttons">
+          <Button @click="onDeleteFromFavorites">{{ $t('yes') }}</Button>
+          <Button @click="onCloseModalDeleteFav">{{ $t('no') }}</Button>
+        </div>
+      </div>
+    </Modal>
+    <Modal ref="modalMaxEl">
+      <div class="block__modal-max">{{ $t('maximum_cities_5') }}</div>
     </Modal>
     <Loader v-if="loading" bg />
   </div>
@@ -84,10 +121,10 @@ const onDeleteFromFavorites = () => {
 <style lang="scss" scoped>
 .block {
   position: relative;
-  overflow: hidden;
-  border: 1px solid var(--color-gray);
+  border: 1px solid transparent;
   border-radius: 1rem;
   padding: 2.5rem;
+  box-shadow: 0 1rem 3.5rem rgba(23, 39, 80, 0.3);
 
   &._fav {
     border-color: var(--color-orange);
@@ -112,6 +149,11 @@ const onDeleteFromFavorites = () => {
   }
 
   &__modal {
+    &-max {
+      font-size: 2rem;
+      text-align: center;
+    }
+
     &-text {
       text-align: center;
       font-size: 2rem;

@@ -47,15 +47,17 @@ export const useCitiesStore = defineStore('cities', () => {
     return objCity
   }
 
-  const getWeather = async (city) => {
+  const getWeather = async (city, id) => {
     try {
+      const params = {
+        units: 'metric',
+        lang: i18n.global.locale.value,
+        ...(id ? { id } : { q: city })
+      }
+
       const [weatherResponse, forecastResponse] = await Promise.all([
-        axiosInstance.get('weather', {
-          params: { q: city, units: 'metric', lang: i18n.global.locale.value }
-        }),
-        axiosInstance.get('forecast', {
-          params: { q: city, units: 'metric', lang: i18n.global.locale.value }
-        })
+        axiosInstance.get('weather', { params }),
+        axiosInstance.get('forecast', { params })
       ])
 
       return { weather: weatherResponse, forecast: forecastResponse }
@@ -87,10 +89,10 @@ export const useCitiesStore = defineStore('cities', () => {
     }
   }
 
-  const getUpdateWeatherFromSearch = async (city, id) => {
+  const getUpdateWeatherFromSearch = async (idRes, id) => {
     let index = cities.value.findIndex((obj) => obj.id === id)
 
-    const { weather, forecast } = await getWeather(city)
+    const { weather, forecast } = await getWeather(null, idRes)
     const objCity = generateObjCity(weather.data, forecast.data)
 
     objCity.id = idCity.value
@@ -119,11 +121,17 @@ export const useCitiesStore = defineStore('cities', () => {
   }
 
   const addToFavorites = (city) => {
-    const isExists = favoriteCitiesId.value.includes(city.idRes)
+    if (favoriteCitiesId.value.length < 5) {
+      const isExists = favoriteCitiesId.value.includes(city.idRes)
 
-    if (!isExists) {
-      favoriteCitiesId.value.push(city.idRes)
-      localStorage.setItem('favoriteCities', JSON.stringify(favoriteCitiesId.value))
+      if (!isExists) {
+        favoriteCitiesId.value.push(city.idRes)
+        localStorage.setItem('favoriteCities', JSON.stringify(favoriteCitiesId.value))
+      }
+
+      return true
+    } else {
+      return false
     }
   }
 
@@ -146,7 +154,6 @@ export const useCitiesStore = defineStore('cities', () => {
 
   const getFavoriteCities = async () => {
     if (favoriteCitiesId.value.length) {
-      favoriteCities.value = []
       try {
         const weatherPromises = favoriteCitiesId.value.flatMap((id) => [
           axiosInstance.get('weather', {
@@ -158,7 +165,7 @@ export const useCitiesStore = defineStore('cities', () => {
         ])
 
         const weatherResponses = await Promise.all(weatherPromises)
-
+        favoriteCities.value = []
         const weatherData = []
         for (let i = 0; i < weatherResponses.length; i += 2) {
           weatherData.push({

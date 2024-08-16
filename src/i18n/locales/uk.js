@@ -28,6 +28,7 @@ export const uk = {
   favorites: 'Обране',
   delete: 'Видалити',
   you_definitely_want_to_delete: 'Ви дійсно хочете видалити погоду для',
+  you_definitely_want: 'Ви дійсно хочете видалити?',
   yes: 'Так',
   no: 'Ні',
   enter_city: 'Введіть місто',
@@ -37,5 +38,7 @@ export const uk = {
   max: 'Макс.',
   min: 'Мін.',
   delete_from: 'Видалити з вибраного',
-  dont_have_favorite: 'У вас ще немає улюбленої погоди'
+  dont_have_favorite: 'У вас ще немає улюбленої погоди',
+  weather: 'Погода',
+  you_definitely_want_to_delete_from: 'Ви точно хочете видалити погоду для {city} з вибраного?'
 }
