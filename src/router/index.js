@@ -8,7 +8,7 @@ const router = createRouter({
   routes: [
     {
       path: '/:locale?',
-      component: RouterView,
+      redirect: `/${Trans.currentLocale}`,
       beforeEnter: Trans.routeMiddleware,
       children: [
         {
