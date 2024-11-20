@@ -8,6 +8,7 @@ import Button from '@/components/Base/Button.vue'
 import Modal from '@/components/Base/Modal.vue'
 
 const store = useCitiesStore()
+console.log(useCitiesStore())
 const { cities } = storeToRefs(store)
 const { favoriteCitiesId } = storeToRefs(store)
 

@@ -1,6 +1,7 @@
 <script setup>
-import { getWindDescription, metersToKilometers, upperCaseFirstLetter } from '@/functions/index.js'
-
+import { useGetWindDescription } from '@/composables/useWindDescription.js'
+import { useUpperCaseFirstLetter } from '@/composables/useUpperCaseFirstLetter.js'
+import { useMetersToKilometers } from '@/composables/useMetersToKilometers.js'
 defineProps({
   city: {
     type: Object,
@@ -24,8 +25,8 @@ defineProps({
       </div>
       <div class="block-info__desc">
         <span>{{ $t('feels_like') }} {{ Math.round(city.feels_like) }}°C. </span>
-        <span>{{ upperCaseFirstLetter(city.description) }}. </span>
-        <span>{{ getWindDescription(city.wind_speed) }}</span>
+        <span>{{ useUpperCaseFirstLetter(city.description) }}. </span>
+        <span>{{ useGetWindDescription(city.wind_speed) }}</span>
       </div>
     </div>
     <div class="block-info__right">
@@ -33,7 +34,7 @@ defineProps({
         {{ $t('humidity') }}: <span>{{ city.humidity }}%</span>
       </div>
       <div class="block-info__item">
-        {{ $t('visibility') }}: <span>{{ metersToKilometers(city.visibility) }}</span>
+        {{ $t('visibility') }}: <span>{{ useMetersToKilometers(city.visibility) }}</span>
       </div>
       <div class="block-info__item">
         {{ $t('pressure') }}: <span>{{ city.pressure }} hPa</span>
