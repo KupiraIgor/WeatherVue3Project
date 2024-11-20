@@ -21,6 +21,7 @@ export const useCitiesStore = defineStore('cities', () => {
       const response = await axios.get('https://ipinfo.io/json?token=08ad19b82bf0f3')
       userCityFromIpAddress.value = response.data.city
     } catch (error) {
+      console.error('Error fetching weather data:', error)
       throw error
     }
   }
@@ -89,6 +90,7 @@ export const useCitiesStore = defineStore('cities', () => {
       const response = await axiosInstance.get(`find?q=${city}`)
       return response.data
     } catch (error) {
+      console.error('Error fetching weather data:', error)
       throw error
     }
   }
@@ -202,23 +204,6 @@ export const useCitiesStore = defineStore('cities', () => {
     }
   }
 
-  const updateCityWithChangeLang = () => {
-    cities.value.forEach(async (item) => {
-      if (item.idRes) {
-        const { weather, oneCall } = await getWeatherOneCall(item.name)
-        const objCity = generateObjCity(weather.data, oneCall.data)
-        objCity.id = item.id
-
-        const index = cities.value.findIndex((i) => i.id === item.id)
-
-        if (index !== -1) {
-          cities.value[index] = objCity
-        }
-      }
-    })
-    getFavoriteCities()
-  }
-
   return {
     cities,
     favoriteCities,
@@ -231,7 +216,6 @@ export const useCitiesStore = defineStore('cities', () => {
     addCity,
     deleteFromFavorites,
     getFavoriteCities,
-    updateCityWithChangeLang,
     getWeatherOneCall,
     getWeatherOneCallCityObj
   }
